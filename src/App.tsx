@@ -1,21 +1,32 @@
 import React from 'react';
-import './App.scss';
+import './styles/_global.scss';
+import { Header } from './components/Header';
+import { Outlet } from 'react-router-dom';
+import { Container } from './components/Container';
+import { Footer } from './components/Footer';
+import { IntroProvider, useIntro } from './providers/IntroProvider';
+import { IntroOverlay } from './components/IntroOverlay';
+import { PageTransitionOverlay } from './components/PageTransitionOverlay';
 
-interface Props {
-  onClick: () => void;
-  children: React.ReactNode;
-}
+const AppContent = () => {
+  const { introOverlayVisible } = useIntro();
 
-export const Provider: React.FC<Props> = React.memo(({ onClick, children }) => (
-  <button type="button" onClick={onClick}>
-    {children}
-  </button>
-));
-
-export const App: React.FC = () => {
   return (
-    <div className="starter">
-      <Provider onClick={() => ({})}>TodoList</Provider>
-    </div>
+    <>
+      {introOverlayVisible && <IntroOverlay />}
+
+      <PageTransitionOverlay />
+      <Header />
+      <Container>
+        <Outlet />
+      </Container>
+      <Footer />
+    </>
   );
 };
+
+export const App = () => (
+  <IntroProvider>
+    <AppContent />
+  </IntroProvider>
+);
